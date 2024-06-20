@@ -2,8 +2,17 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import PokemonCard from "./PokemonCard";
 
+interface Pokemon {
+  id: number;
+  name: string;
+  sprites: {
+    front_default: string;
+  };
+  [key: string]: any; // Add this line to allow any additional properties
+}
+
 const PokemonList = ({ searchQuery }: { searchQuery: string }) => {
-  const [pokemons, setPokemons] = useState([]);
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +22,7 @@ const PokemonList = ({ searchQuery }: { searchQuery: string }) => {
           "https://pokeapi.co/api/v2/pokemon?limit=151"
         );
         const pokemonData = await Promise.all(
-          response.data.results.map(async (pokemon) => {
+          response.data.results.map(async (pokemon: { url: string }) => {
             const pokemonRecord = await axios.get(pokemon.url);
             return pokemonRecord.data;
           })
